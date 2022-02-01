@@ -40,12 +40,25 @@
 - gsutil versioning set on gs://storage-lab-cli-jc-2022-0131
 - gsutil ls gs://storage-lab-cli-jc-2022-0131/
 - gsutil cp bucket_labels.json gs://storage-lab-cli-jc-2022-0131/
-- Gsutil ls -a gs://storage-lab-cli-jc-2022-0131/ → -a for archive, shows object versioning
-- Gsutil cp gs://storage-labl-console-jc-20220131/** gs://storage-lab-cli-jc-2022-0131
+- gsutil ls -a gs://storage-lab-cli-jc-2022-0131/ → -a for archive, shows object versioning
+- gsutil cp gs://storage-labl-console-jc-20220131/** gs://storage-lab-cli-jc-2022-0131
     - /** copies all objects regardless of folder hierarchy, BUT different from -r recursive flag bc cmd will copy all files to the destination without hierarchy
     - Share settings are not copied
-- Gsutil acl ch -u AllUser:R gs://<bucket>/<object>
+- gsutil acl ch -u AllUser:R gs://<bucket>/<object>
     - acl = access control list
     - ch = change
     - -u = user
     - R = read
+- gsutil rm
+
+## VM
+
+- gcloud config get-value project
+- gcloud compute instances list
+- gcloud services list
+    - gcloud services list --enabled
+    - gcloud services list --available
+    - gcloud services list --available | grep compute
+    - gcloud services enable compute.googleapis.com
+        - enabling an API may enable other dependent or related APIs as well
+    - gcloud compute instances create myvm
