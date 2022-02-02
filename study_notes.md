@@ -54,11 +54,17 @@
 ## VM
 
 - gcloud config get-value project
+- gcloud config list project
+- gcloud config list --all
+- gcloud config list compute/zone
 - gcloud compute instances list
+  - cmd initially gets 403 bc compute API isn't enabled -- but actually running cmd gets PERMISSION DENIED, no 403
 - gcloud services list
     - gcloud services list --enabled
     - gcloud services list --available
     - gcloud services list --available | grep compute
     - gcloud services enable compute.googleapis.com
-        - enabling an API may enable other dependent or related APIs as well
+        - enabling an API may enable other dependent or related APIs as well (i.e. oslogin)
+        - also created cloud services & compute@developer service accounts
     - gcloud compute instances create myvm
+  - --help gets full help docs, -h gets simpler help docs
