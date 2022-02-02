@@ -1,1 +1,1 @@
-# gcp-associate-cloud-engineer
+# gcp-associate-cloud-engineer-study-notes
