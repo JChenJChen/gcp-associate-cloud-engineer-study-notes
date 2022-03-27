@@ -250,12 +250,17 @@ gcloud init
   - SSH: tcp:22
 - CIDR blocks:
   - /32 -> 255.255.255.255
-  - /28 -> 255.255.255.0
+  - /31 -> 2 IPs
+  - /30 -> 4 IPs
   - /29 -> 8 IP address, 4 usable, 4 are reserved by Google (only bits 30, 31, 32 can change. 3 digit binary can have 8 different values)
-  - /28 -> 16 addresses
+  - /28 -> 255.255.255.0 -> 16 addresses
   - /27 -> 32 addresses
   - /26 -> 64 addresses
   - /20 ->
+
+resources:
+- subnetting & CIDR: https://www.youtube.com/watch?v=s_Ntt6eTn94
+- subnets cheat sheet: https://www.freecodecamp.org/news/subnet-cheat-sheet-24-subnet-mask-30-26-27-29-and-other-ip-address-cidr-network-references/
 
 ### Networking in the Cloud: DNS, Load Balancing, and IP Addressing
 
@@ -279,6 +284,8 @@ gcloud init
   3. `gcloud dns record-sets transaction execute --zone=ace-exam-zone1`
 
 ### Load Balancers
+
+- sidenote: [eli5 HTTP(S), TLS, TCP, etc](https://www.nagekar.com/2018/07/eli5-how-https-works.html)
 
 Types:
 - HTTPS: cross-regional LB for web app
@@ -397,22 +404,14 @@ Cloud DNS
 
 ## BQ
 - `bq ––location=[LOCATION] query ––use_legacy_sql=false ––dry_run [SQL_QUERY]`
+
 - `bq --location=US show -j gcpace-project:US.bquijob_119adae7_167c373d5c3`
-
-## pub/sub
-
-- `gcloud pubsub topics create [TOPIC-NAME]`
-- `gcloud pubsub subscriptions create [SUBSCRIPTION-NAME] ––topic [TOPIC-NAME]`
-
 ## BigTable
 - `echo instance = ace-exam-bigtable >> ~/.cbtrc`
 - `cbt createtable ace-exam-bt-table`
 - `cbt createfamily ace-exam-bt-table colfam1`
 - `cbt set ace-exam-bt-table row1 colfam1:col1=ace-exam-value`
 - `cbt read ace-exam-bt-table `
-
-## DataProc
-- `gcloud dataproc clusters create cluster-bc3d ––zone us-west2-a`
 
 ## GCS
 - change storage class: `gsutil rewrite -s [STORAGE_CLASS] gs://[PATH_TO_OBJECT]`
@@ -428,6 +427,7 @@ Cloud DNS
 
 ### Datastore
 
+- The Datastore export commands produces a metadata file and a folder with the data as an output
 1. `gcloud datastore export --namespaces="(default)" gs://${BUCKET}`
 2. `gcloud datastore import gs://${BUCKET}/[PATH]/[FILE].overall_export_metadata`
 
@@ -464,6 +464,7 @@ java -jar bigtable-beam-import-1.6.0-shaded.jar import \
 
 ### Dataproc
 
+- `gcloud dataproc clusters create cluster-bc3d ––zone us-west2-a`
 - export dataproc cluster config: `gcloud beta dataproc clusters export [CLUSTER_NAME] --destination=[PATH_TO_EXPORT_FILE]`
 - import source config file: `gcloud beta dataproc clusters import [SOURCE_FILE]`
 
@@ -525,6 +526,13 @@ java -jar bigtable-beam-import-1.6.0-shaded.jar import \
        - metric labels
        - monitored resource objectst o include w/ time series data points
    - [programmatically create custom metrics](https://cloud.google.com/monitoring/custom-metrics/creating-metrics)
+ - Installing Stackdriver agents
+   - cloud monitoring agent:
+     - GCE VMs: optional but recommended. Monitoring can still access some metrics from VM's hypervisor without agent, such as CPU util, some disk traffic metrics, network traffic, uptime.
+     - Amazon Elastic Compute Cloud (EC2) VMs: required
+   - cloud logging agent: best practice to run on all VMs
+     - GCE & Amazon EC2 VM images do NOT include logging agent, must be installed
+     - GKE & GAE: agent included in VM image.
 
 ### Log Sinks
 
@@ -568,6 +576,7 @@ cloud debug allows devs to insert log statements (without altering src code) or 
 ## MISC.
 
 - `gsutil acl ch -u coworker@email.domain:r gs://mybucket/myfile`
+- `gcloud container clusters get-credentials`
 
 ## Drill Areas
 
@@ -591,7 +600,7 @@ cloud debug allows devs to insert log statements (without altering src code) or 
   - SA email address =OR= project number to construct email, used by default GCE SA -- not ID like app engine
     - if want to use nonn-default SA: need both project ID (not number!) + SA name
 - hashing & salting passwords? something about view, not just compare, and hashing making it unusable.
-- predefined machine types
+- **predefined machine types**
   - named by CPU counts -- always power of 2
   - custom machine types: can't add more RAM per CPU than `highmem` machine types (unless using extended memory -- which isn't available to 8-cpu custom type option bc no `--custom-extensions`)
 - default SA permissions scopes: allows reading from GCS
@@ -604,3 +613,23 @@ cloud debug allows devs to insert log statements (without altering src code) or 
 - cmds that require zone:
   - gcloud container clusters describe --zone us-central1-a standard-cluster-1
   - gcloud container clusters get-credentials --zone us-central1-a standard-cluster-1
+- Storage options chart
+  - transactions
+  - minimum storage duration
+- logging
+  - when to install stackdriver agent
+  - stdout+stderr. (is writing to .log file ever necessary?)
+- common iam policies and permissions
+
+## Practice Exam Questions
+
+- flash cards: https://quizlet.com/421219034/gcp-associate-cloud-engineer-flash-cards/
+- https://www.vmexam.com/google/google-gcp-ace-certification-exam-sample-questions
+- https://www.testpreptraining.com/google-cloud-certified-associate-cloud-engineer-free-practice-test
+- https://gcp-examquestions.com/gcp-associate-cloud-engineer-practice-exam-part-1/
+  - https://gcp-examquestions.com/gcp-associate-cloud-engineer-practice-exam-part-2/
+  - https://gcp-examquestions.com/gcp-associate-cloud-engineer-practice-exam-part-3/
+  - https://gcp-examquestions.com/gcp-associate-cloud-engineer-practice-exam-part-4/
+  - https://gcp-examquestions.com/gcp-associate-cloud-engineer-practice-exam-part-5/
+  - https://gcp-examquestions.com/gcp-associate-cloud-engineer-practice-exam-part-6/
+- https://books.google.com/books?id=haxjEAAAQBAJ&pg=PT14&lpg=PT14&dq=%22man+gcloud+compute+instances+create%22&source=bl&ots=yOzwBdhYou&sig=ACfU3U2DwPr3kndWw-DO28wyi2EMB8WeaQ&hl=en&sa=X&ved=2ahUKEwjZrMzpmNv2AhWkjYkEHbAmDK0Q6AF6BAgCEAM#v=onepage&q=%22man%20gcloud%20compute%20instances%20create%22&f=false
