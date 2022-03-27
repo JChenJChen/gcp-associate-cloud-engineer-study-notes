@@ -577,6 +577,7 @@ cloud debug allows devs to insert log statements (without altering src code) or 
 
 - `gsutil acl ch -u coworker@email.domain:r gs://mybucket/myfile`
 - `gcloud container clusters get-credentials`
+- billing account user + project creator = can create billable project
 
 ## Drill Areas
 
